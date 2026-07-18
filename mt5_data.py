@@ -12,5 +12,16 @@ def disconnect():
     mt5.shutdown()
 
 
-def get_candles(symbol="XAUUSDm", timeframe=mt5.TIMEFRAME_M15, bars=100):
-    return mt5.copy_rates_from_pos(symbol, timeframe, 0, bars)
+def get_candles(symbol="XAUUSDm", timeframe=None, bars=100):
+
+    if timeframe is None:
+        timeframe = mt5.TIMEFRAME_M15
+
+    rates = mt5.copy_rates_from_pos(
+        symbol,
+        timeframe,
+        0,
+        bars
+    )
+
+    return rates
