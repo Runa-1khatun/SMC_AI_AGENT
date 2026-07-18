@@ -8,36 +8,20 @@ def find_swings(candles, lookback=3):
         high = candles[i]["high"]
         low = candles[i]["low"]
 
-        is_high = True
-        is_low = True
-
-        for j in range(1, lookback + 1):
-
-            if high <= candles[i-j]["high"] or high <= candles[i+j]["high"]:
-                is_high = False
-
-            if low >= candles[i-j]["low"] or low >= candles[i+j]["low"]:
-                is_low = False
-
-        # Minimum swing distance filter
-        if is_high:
-            if len(swing_highs) > 0:
-                last_high = swing_highs[-1][1]
-
-                if abs(high - last_high) < 3:
-                    is_high = False
-
-        if is_low:
-            if len(swing_lows) > 0:
-                last_low = swing_lows[-1][1]
-
-                if abs(low - last_low) < 3:
-                    is_low = False
-
-        if is_high:
+        # Swing High
+        if all(
+            high > candles[j]["high"]
+            for j in range(i - lookback, i + lookback + 1)
+            if j != i
+        ):
             swing_highs.append((i, high))
 
-        if is_low:
+        # Swing Low
+        if all(
+            low < candles[j]["low"]
+            for j in range(i - lookback, i + lookback + 1)
+            if j != i
+        ):
             swing_lows.append((i, low))
 
     return swing_highs, swing_lows
@@ -50,18 +34,18 @@ def detect_bos(candles, swing_highs, swing_lows):
 
     last_close = candles[-1]["close"]
 
-    prev_high = swing_highs[-2][1]
+    # শেষ Swing High
     last_high = swing_highs[-1][1]
 
-    prev_low = swing_lows[-2][1]
+    # শেষ Swing Low
     last_low = swing_lows[-1][1]
 
-    # Strong Bullish BOS
-    if last_high > prev_high and last_close > last_high:
+    # Bullish BOS
+    if last_close > last_high:
         return "Bullish BOS"
 
-    # Strong Bearish BOS
-    elif last_low < prev_low and last_close < last_low:
+    # Bearish BOS
+    elif last_close < last_low:
         return "Bearish BOS"
 
     return "No BOS"

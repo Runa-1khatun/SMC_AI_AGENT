@@ -1,4 +1,4 @@
-def trade_decision(trend, bos, choch, fvgs, order_blocks, sweeps):
+def trade_decision(trend, bos, choch, fvgs, order_blocks, sweeps, entry_signal):
 
     reasons = []
     confidence = 0
@@ -32,16 +32,25 @@ def trade_decision(trend, bos, choch, fvgs, order_blocks, sweeps):
         reasons.append("Liquidity Sweep")
 
     # Smart Decision
-    if trend == "BULLISH" and bos == "Bullish BOS" and choch == "Bullish CHoCH":
-        decision = "BUY"
-        confidence = 90
-
-    elif trend == "BEARISH" and bos == "Bearish BOS" and choch == "Bearish CHoCH":
+    if (
+        trend == "BEARISH"
+        and bos == "Bearish BOS"
+        and choch == "Bearish CHoCH"
+        and entry_signal == "SELL"
+    ):
         decision = "SELL"
-        confidence = 90
+
+    elif (
+        trend == "BULLISH"
+        and bos == "Bullish BOS"
+        and choch == "Bullish CHoCH"
+        and entry_signal == "BUY"
+    ):
+        decision = "BUY"
 
     else:
         decision = "NO TRADE"
-        confidence = 40
+
+    confidence = 40
 
     return decision, confidence, reasons
