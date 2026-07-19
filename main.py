@@ -13,6 +13,7 @@ import liquidity
 import pd_zone
 import checklist
 import market
+import report
 
 # initialize defaults to avoid NameError when not connected
 candles = []
@@ -102,28 +103,20 @@ checks = checklist.trade_checklist(
 confidence = max(buy_score, sell_score)
 trade = risk.calculate_trade(decision, candles, highs, lows)
 
-print("========== SMC REPORT ==========")
-print("Swing Highs:", len(highs))
-print("Swing Lows :", len(lows))
-print("BOS :", bos)
-print("CHoCH :", choch)
-print("FVG :", len(fvgs))
-if valid_fvg:
-    print("Valid FVG :", valid_fvg)
-    print("FVG Retest :", fvg_retest)
-print("Order Blocks :", len(order_blocks))
-print("Liquidity Sweeps :", len(sweeps))
-print("Order Block Retest :", ob_retest)
-chart.plot_chart(candles, highs, lows, bos)
-
-mt5_data.disconnect()
-
-if valid_ob:
-    print("Valid Order Block :", valid_ob)
-
-if sweeps:
-    print("Latest Sweep :", sweeps[-1])
-    print("\n========== TRADE CHECKLIST ==========")
+report.show_smc_report(
+    highs,
+    lows,
+    bos,
+    choch,
+    fvgs,
+    valid_fvg,
+    fvg_retest,
+    order_blocks,
+    valid_ob,
+    ob_retest,
+    sweeps,
+)
+print("\n========== TRADE CHECKLIST ==========")
 
 for name, status in checks.items():
     print(f"{name:<22}: {'YES' if status else 'NO'}")
