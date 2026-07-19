@@ -32,3 +32,10 @@ def show_smc_report(
 
     if sweeps:
         print("Latest Sweep :", sweeps[-1])
+
+
+def show_trade_checklist(checks):
+    print("\n========== TRADE CHECKLIST ==========")
+
+    for name, status in checks.items():
+        print(f"{name:<22}: {'YES' if status else 'NO'}")

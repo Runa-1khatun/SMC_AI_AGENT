@@ -116,11 +116,7 @@ report.show_smc_report(
     ob_retest,
     sweeps,
 )
-print("\n========== TRADE CHECKLIST ==========")
-
-for name, status in checks.items():
-    print(f"{name:<22}: {'YES' if status else 'NO'}")
-
+report.show_trade_checklist(checks)
 print()
 print("========== AI DECISION ==========")
 print("Buy Score :", buy_score)
