@@ -1,10 +1,13 @@
 import MetaTrader5 as mt5
 
-
 def connect():
+
     if not mt5.initialize():
         print("MT5 Connection Failed")
+        print("Error:", mt5.last_error())
         return False
+
+    print("MT5 Connected Successfully")
     return True
 
 

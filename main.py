@@ -7,6 +7,8 @@ import chart
 import indicators
 import trend
 import entry
+import confluence
+import structure
 
 # initialize defaults to avoid NameError when not connected
 candles = []
@@ -56,22 +58,51 @@ trend_result = trend_h1
 
 print("Trend :", trend_result)
 
-highs, lows = smc.find_swings(candles, lookback=3)
+highs, lows = structure.find_swings(candles, lookback=3)
 
-bos = smc.detect_bos(candles_m15, highs, lows)
-choch = smc.detect_choch(candles_m15, highs, lows)
-fvg = smc.detect_fvg(candles_m15)
-order_blocks = smc.detect_order_blocks(candles_m15)
-sweeps = smc.detect_liquidity_sweep(candles_m15, highs, lows)
-decision, confidence, reasons = strategy.trade_decision(
+bos = structure.detect_bos(candles_m15, highs, lows)
+choch = structure.detect_choch(candles_m15, highs, lows)
+bias = structure.structure_bias(
     trend_result,
     bos,
     choch,
-    fvg,
+)
+
+print("Structure Bias :", bias)
+pd_zone = smc.premium_discount(candles)
+
+print("Premium/Discount :", pd_zone)
+fvg = smc.detect_fvg(candles_m15)
+order_blocks = smc.detect_order_blocks(candles_m15)
+valid_order_block = smc.get_valid_order_block(order_blocks, trend_result)
+sweeps = smc.detect_liquidity_sweep(candles_m15, highs, lows)
+ob_retest = smc.order_block_retest(candles, order_blocks)
+valid_ob = smc.get_valid_order_block(
     order_blocks,
+    trend_result,
+)
+valid_fvg = smc.get_valid_fvg(
+    fvg,
+    trend_result,
+)
+
+fvg_retest = smc.fvg_retest(
+    candles,
+    valid_fvg,
+)
+decision, confidence, reasons, buy_score, sell_score = confluence.analyze(
+    trend_result,
+    bos,
+    choch,
+    order_blocks,
+    fvg,
     sweeps,
     entry_signal,
+    ob_retest,
+    fvg_retest,
 )
+
+confidence = max(buy_score, sell_score)
 trade = risk.calculate_trade(decision, candles, highs, lows)
 
 print("========== SMC REPORT ==========")
@@ -80,22 +111,29 @@ print("Swing Lows :", len(lows))
 print("BOS :", bos)
 print("CHoCH :", choch)
 print("FVG :", len(fvg))
+if valid_fvg:
+    print("Valid FVG :", valid_fvg)
+    print("FVG Retest :", fvg_retest)
 print("Order Blocks :", len(order_blocks))
 print("Liquidity Sweeps :", len(sweeps))
+print("Order Block Retest :", ob_retest)
 chart.plot_chart(candles, highs, lows, bos)
 
 mt5_data.disconnect()
 
-if order_blocks:
-    print("Latest Order Block :", order_blocks[-1])
+if valid_ob:
+    print("Valid Order Block :", valid_ob)
 
 if sweeps:
     print("Latest Sweep :", sweeps[-1])
 
 print()
 print("========== AI DECISION ==========")
+print("Buy Score :", buy_score)
+print("Sell Score:", sell_score)
 print("Decision :", decision)
 print("Confidence :", confidence, "%")
+
 
 print("Reasons :")
 for r in reasons:
