@@ -1,6 +1,5 @@
 import MetaTrader5 as mt5
 import mt5_data
-import smc
 import strategy
 import risk
 import chart
