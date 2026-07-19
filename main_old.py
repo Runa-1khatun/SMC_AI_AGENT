@@ -1,5 +1,6 @@
 import MetaTrader5 as mt5
 import mt5_data
+import strategy
 import risk
 import chart
 import indicators
@@ -12,7 +13,7 @@ import fvg as fvg_module
 import liquidity
 import pd_zone
 import checklist
-import market
+import engine
 
 # initialize defaults to avoid NameError when not connected
 candles = []
@@ -27,13 +28,41 @@ confidence = None
 reasons = []
 trade = None
 
-data = market.load_market()
+if mt5_data.connect():
 
-candles = data["candles"]
-candles_m15 = data.get("candles_m15", candles)
-trend_h4 = data["trend_h4"]
-trend_h1 = data["trend_h1"]
-entry_signal = data["entry_signal"]
+    candles_h4 = mt5_data.get_candles(timeframe=mt5.TIMEFRAME_H4)
+    candles_h1 = mt5_data.get_candles(timeframe=mt5.TIMEFRAME_H1)
+    candles_m15 = mt5_data.get_candles(timeframe=mt5.TIMEFRAME_M15)
+    candles_m5 = mt5_data.get_candles(timeframe=mt5.TIMEFRAME_M5)
+
+    print("H4 Candles :", len(candles_h4))
+    print("H1 Candles :", len(candles_h1))
+    print("M15 Candles:", len(candles_m15))
+    print("M5 Candles :", len(candles_m5))
+
+    df_h4 = indicators.add_ema(candles_h4)
+
+    ema50_h4 = df_h4["EMA50"].iloc[-1]
+    ema200_h4 = df_h4["EMA200"].iloc[-1]
+
+    trend_h4 = trend.get_trend(
+        ema50_h4,
+        ema200_h4,
+    )
+    print("H4 Trend :", trend_h4)
+
+    df_h1 = indicators.add_ema(candles_h1)
+
+    ema50_h1 = df_h1["EMA50"].iloc[-1]
+    ema200_h1 = df_h1["EMA200"].iloc[-1]
+
+    trend_h1 = trend.get_trend(ema50_h1, ema200_h1)
+    
+    print("H1 Trend :", trend_h1)
+    entry_signal = entry.confirm_entry(candles_m5)
+    print("Entry Signal :", entry_signal)
+
+    candles = candles_m15
 
 df = indicators.add_ema(candles)
 
@@ -49,8 +78,8 @@ print("Trend :", trend_result)
 
 highs, lows = structure.find_swings(candles, lookback=3)
 
-bos = structure.detect_bos(candles, highs, lows)
-choch = structure.detect_choch(candles, highs, lows)
+bos = structure.detect_bos(candles_m15, highs, lows)
+choch = structure.detect_choch(candles_m15, highs, lows)
 bias = structure.structure_bias(
     trend_result,
     bos,
