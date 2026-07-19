@@ -9,6 +9,7 @@ import trend
 import entry
 import confluence
 import structure
+import orderblock
 
 # initialize defaults to avoid NameError when not connected
 candles = []
@@ -73,11 +74,11 @@ pd_zone = smc.premium_discount(candles)
 
 print("Premium/Discount :", pd_zone)
 fvg = smc.detect_fvg(candles_m15)
-order_blocks = smc.detect_order_blocks(candles_m15)
-valid_order_block = smc.get_valid_order_block(order_blocks, trend_result)
+order_blocks = orderblock.detect_order_blocks(candles_m15)
+valid_order_block = orderblock.get_valid_order_block(order_blocks, trend_result)
 sweeps = smc.detect_liquidity_sweep(candles_m15, highs, lows)
-ob_retest = smc.order_block_retest(candles, order_blocks)
-valid_ob = smc.get_valid_order_block(
+ob_retest = orderblock.order_block_retest(candles, order_blocks)
+valid_ob = orderblock.get_valid_order_block(
     order_blocks,
     trend_result,
 )
