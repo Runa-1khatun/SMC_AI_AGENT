@@ -10,6 +10,8 @@ import entry
 import confluence
 import structure
 import orderblock
+import fvg
+import liquidity
 
 # initialize defaults to avoid NameError when not connected
 candles = []
@@ -73,21 +75,21 @@ print("Structure Bias :", bias)
 pd_zone = smc.premium_discount(candles)
 
 print("Premium/Discount :", pd_zone)
-fvg = smc.detect_fvg(candles_m15)
+fvg = fvg.detect_fvg(candles_m15)
 order_blocks = orderblock.detect_order_blocks(candles_m15)
 valid_order_block = orderblock.get_valid_order_block(order_blocks, trend_result)
-sweeps = smc.detect_liquidity_sweep(candles_m15, highs, lows)
+sweeps = liquidity.detect_liquidity_sweep(candles_m15, highs, lows)
 ob_retest = orderblock.order_block_retest(candles, order_blocks)
 valid_ob = orderblock.get_valid_order_block(
     order_blocks,
     trend_result,
 )
-valid_fvg = smc.get_valid_fvg(
+valid_fvg = fvg.get_valid_fvg(
     fvg,
     trend_result,
 )
 
-fvg_retest = smc.fvg_retest(
+fvg_retest = fvg.fvg_retest(
     candles,
     valid_fvg,
 )
