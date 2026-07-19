@@ -10,8 +10,9 @@ import entry
 import confluence
 import structure
 import orderblock
-import fvg
+import fvg as fvg_module
 import liquidity
+import pd_zone
 
 # initialize defaults to avoid NameError when not connected
 candles = []
@@ -72,10 +73,10 @@ bias = structure.structure_bias(
 )
 
 print("Structure Bias :", bias)
-pd_zone = smc.premium_discount(candles)
+pd_zone = pd_zone.premium_discount(candles)
 
 print("Premium/Discount :", pd_zone)
-fvg = fvg.detect_fvg(candles_m15)
+fvgs = fvg_module.detect_fvg(candles_m15)
 order_blocks = orderblock.detect_order_blocks(candles_m15)
 valid_order_block = orderblock.get_valid_order_block(order_blocks, trend_result)
 sweeps = liquidity.detect_liquidity_sweep(candles_m15, highs, lows)
@@ -84,12 +85,12 @@ valid_ob = orderblock.get_valid_order_block(
     order_blocks,
     trend_result,
 )
-valid_fvg = fvg.get_valid_fvg(
-    fvg,
+valid_fvg = fvg_module.get_valid_fvg(
+    fvgs,
     trend_result,
 )
 
-fvg_retest = fvg.fvg_retest(
+fvg_retest = fvg_module.fvg_retest(
     candles,
     valid_fvg,
 )
@@ -98,7 +99,7 @@ decision, confidence, reasons, buy_score, sell_score = confluence.analyze(
     bos,
     choch,
     order_blocks,
-    fvg,
+    fvgs,
     sweeps,
     entry_signal,
     ob_retest,
@@ -113,7 +114,7 @@ print("Swing Highs:", len(highs))
 print("Swing Lows :", len(lows))
 print("BOS :", bos)
 print("CHoCH :", choch)
-print("FVG :", len(fvg))
+print("FVG :", len(fvgs))
 if valid_fvg:
     print("Valid FVG :", valid_fvg)
     print("FVG Retest :", fvg_retest)
