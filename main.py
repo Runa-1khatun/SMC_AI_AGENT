@@ -12,6 +12,7 @@ import orderblock
 import fvg as fvg_module
 import liquidity
 import pd_zone
+import checklist
 
 # initialize defaults to avoid NameError when not connected
 candles = []
@@ -28,13 +29,26 @@ trade = None
 
 if mt5_data.connect():
 
+    candles_h4 = mt5_data.get_candles(timeframe=mt5.TIMEFRAME_H4)
     candles_h1 = mt5_data.get_candles(timeframe=mt5.TIMEFRAME_H1)
     candles_m15 = mt5_data.get_candles(timeframe=mt5.TIMEFRAME_M15)
     candles_m5 = mt5_data.get_candles(timeframe=mt5.TIMEFRAME_M5)
 
+    print("H4 Candles :", len(candles_h4))
     print("H1 Candles :", len(candles_h1))
     print("M15 Candles:", len(candles_m15))
     print("M5 Candles :", len(candles_m5))
+
+    df_h4 = indicators.add_ema(candles_h4)
+
+    ema50_h4 = df_h4["EMA50"].iloc[-1]
+    ema200_h4 = df_h4["EMA200"].iloc[-1]
+
+    trend_h4 = trend.get_trend(
+        ema50_h4,
+        ema200_h4,
+    )
+    print("H4 Trend :", trend_h4)
 
     df_h1 = indicators.add_ema(candles_h1)
 
@@ -42,7 +56,7 @@ if mt5_data.connect():
     ema200_h1 = df_h1["EMA200"].iloc[-1]
 
     trend_h1 = trend.get_trend(ema50_h1, ema200_h1)
-
+    
     print("H1 Trend :", trend_h1)
     entry_signal = entry.confirm_entry(candles_m5)
     print("Entry Signal :", entry_signal)
@@ -94,12 +108,20 @@ fvg_retest = fvg_module.fvg_retest(
     valid_fvg,
 )
 decision, confidence, reasons, buy_score, sell_score = confluence.analyze(
-    trend_result,
+    trend_h4,
+    trend_h1,
     bos,
     choch,
     order_blocks,
     fvgs,
     sweeps,
+    entry_signal,
+    ob_retest,
+    fvg_retest,
+)
+checks = checklist.trade_checklist(
+    trend_h4,
+    trend_h1,
     entry_signal,
     ob_retest,
     fvg_retest,
@@ -129,6 +151,10 @@ if valid_ob:
 
 if sweeps:
     print("Latest Sweep :", sweeps[-1])
+    print("\n========== TRADE CHECKLIST ==========")
+
+for name, status in checks.items():
+    print(f"{name:<22}: {'YES' if status else 'NO'}")
 
 print()
 print("========== AI DECISION ==========")

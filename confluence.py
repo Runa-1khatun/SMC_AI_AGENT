@@ -1,5 +1,6 @@
 def analyze(
-    trend,
+    trend_h4,
+    trend_h1,
     bos,
     choch,
     order_blocks,
@@ -9,22 +10,46 @@ def analyze(
     ob_retest,
     fvg_retest,
 ):
-
     buy_score = 0
     sell_score = 0
     reasons = []
 
     # =========================
-    # Trend
+    # H4 Trend
+    # =========================
+    if trend_h4 == "BULLISH":
+        buy_score += 20
+        reasons.append("H4 Bullish Trend")
+
+    elif trend_h4 == "BEARISH":
+        sell_score += 20
+        reasons.append("H4 Bearish Trend")
+
+    # =========================
+    # H1 Trend
     # =========================
 
-    if trend == "BULLISH":
-        buy_score += 30
-        reasons.append("Bullish Trend")
+    if trend_h1 == "BULLISH":
+        buy_score += 10
+        reasons.append("H1 Bullish Trend")
 
-    elif trend == "BEARISH":
-        sell_score += 30
-        reasons.append("Bearish Trend")
+    elif trend_h1 == "BEARISH":
+        sell_score += 10
+        reasons.append("H1 Bearish Trend")
+
+    # =========================
+    # Trend Alignment Bonus
+    # =========================
+
+    if trend_h4 == trend_h1:
+
+        if trend_h4 == "BULLISH":
+            buy_score += 10
+            reasons.append("HTF Bullish Alignment")
+
+        elif trend_h4 == "BEARISH":
+            sell_score += 10
+            reasons.append("HTF Bearish Alignment")
 
     # =========================
     # BOS
@@ -116,7 +141,7 @@ def analyze(
     # Trend Filter
     # =========================
 
-    if trend == "BEARISH":
+    if trend_h4 == "BEARISH":
         if bos == "Bullish BOS":
             buy_score -= 20
             reasons.append("Counter Trend BOS")
@@ -125,7 +150,7 @@ def analyze(
             buy_score -= 15
             reasons.append("Counter Trend CHoCH")
 
-    elif trend == "BULLISH":
+    elif trend_h4 == "BULLISH":
         if bos == "Bearish BOS":
             sell_score -= 20
             reasons.append("Counter Trend BOS")
