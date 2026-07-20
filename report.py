@@ -39,3 +39,41 @@ def show_trade_checklist(checks):
 
     for name, status in checks.items():
         print(f"{name:<22}: {'YES' if status else 'NO'}")
+
+
+def show_ai_decision(
+    buy_score,
+    sell_score,
+    decision,
+    confidence,
+    reasons,
+):
+    """Print AI decision summary.
+
+    reasons should be an iterable of strings.
+    """
+    print()
+    print("========== AI DECISION ==========")
+    print("Buy Score :", buy_score)
+    print("Sell Score:", sell_score)
+    print("Decision :", decision)
+    print("Confidence :", confidence, "%")
+
+    print("Reasons :")
+    if reasons:
+        for reason in reasons:
+            print("-", reason)
+    else:
+        print("- None")
+
+
+def show_trade(trade):
+    if not trade:
+        return
+
+    print()
+    print("========== TRADE ==========")
+    print("Entry :", trade["entry"])
+    print("SL    :", trade["sl"])
+    print("TP    :", trade["tp"])
+    print("RR    :", trade["rr"])

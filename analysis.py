@@ -1,12 +1,9 @@
-import indicators
 import structure
 import orderblock
 import fvg as fvg_module
 import liquidity
 import pd_zone
-import confluence
-import checklist
-import risk
+
 def analyze_market(
     candles,
     trend_h4,

@@ -1,19 +1,7 @@
-import MetaTrader5 as mt5
-import mt5_data
-import risk
-import chart
-import indicators
-import trend
-import entry
-import confluence
-import structure
-import orderblock
-import fvg as fvg_module
-import liquidity
-import pd_zone
-import checklist
 import market
 import report
+import analysis
+import decision
 
 # initialize defaults to avoid NameError when not connected
 candles = []
@@ -23,7 +11,7 @@ choch = None
 fvg = []
 order_blocks = []
 sweeps = []
-decision = None
+# keep module name `decision` imported; do not shadow it with a variable
 confidence = None
 reasons = []
 trade = None
@@ -36,11 +24,6 @@ trend_h4 = data["trend_h4"]
 trend_h1 = data["trend_h1"]
 entry_signal = data["entry_signal"]
 
-df = indicators.add_ema(candles)
-
-ema50 = df["EMA50"].iloc[-1]
-ema200 = df["EMA200"].iloc[-1]
-
 print()
 print("========== TREND ==========")
 
@@ -48,39 +31,34 @@ trend_result = trend_h1
 
 print("Trend :", trend_result)
 
-highs, lows = structure.find_swings(candles, lookback=3)
-
-bos = structure.detect_bos(candles, highs, lows)
-choch = structure.detect_choch(candles, highs, lows)
-bias = structure.structure_bias(
-    trend_result,
+(
+    highs,
+    lows,
     bos,
     choch,
+    bias,
+    pd_zone_result,
+    fvgs,
+    order_blocks,
+    valid_order_block,
+    sweeps,
+    ob_retest,
+    valid_ob,
+    valid_fvg,
+    fvg_retest,
+) = analysis.analyze_market(
+    candles,
+    trend_h4,
+    trend_h1,
+    entry_signal,
 )
 
 print("Structure Bias :", bias)
-pd_zone = pd_zone.premium_discount(candles)
-
-print("Premium/Discount :", pd_zone)
-fvgs = fvg_module.detect_fvg(candles_m15)
-order_blocks = orderblock.detect_order_blocks(candles_m15)
-valid_order_block = orderblock.get_valid_order_block(order_blocks, trend_result)
-sweeps = liquidity.detect_liquidity_sweep(candles_m15, highs, lows)
-ob_retest = orderblock.order_block_retest(candles, order_blocks)
-valid_ob = orderblock.get_valid_order_block(
-    order_blocks,
-    trend_result,
-)
-valid_fvg = fvg_module.get_valid_fvg(
-    fvgs,
-    trend_result,
-)
-
-fvg_retest = fvg_module.fvg_retest(
+print("Premium/Discount :", pd_zone_result)
+result = decision.make_decision(
     candles,
-    valid_fvg,
-)
-decision, confidence, reasons, buy_score, sell_score = confluence.analyze(
+    highs,
+    lows,
     trend_h4,
     trend_h1,
     bos,
@@ -92,16 +70,14 @@ decision, confidence, reasons, buy_score, sell_score = confluence.analyze(
     ob_retest,
     fvg_retest,
 )
-checks = checklist.trade_checklist(
-    trend_h4,
-    trend_h1,
-    entry_signal,
-    ob_retest,
-    fvg_retest,
-)
 
-confidence = max(buy_score, sell_score)
-trade = risk.calculate_trade(decision, candles, highs, lows)
+trade_decision = result["decision"]
+confidence = result["confidence"]
+reasons = result["reasons"]
+buy_score = result["buy_score"]
+sell_score = result["sell_score"]
+checks = result["checks"]
+trade = result["trade"]
 
 report.show_smc_report(
     highs,
@@ -117,22 +93,11 @@ report.show_smc_report(
     sweeps,
 )
 report.show_trade_checklist(checks)
-print()
-print("========== AI DECISION ==========")
-print("Buy Score :", buy_score)
-print("Sell Score:", sell_score)
-print("Decision :", decision)
-print("Confidence :", confidence, "%")
-
-
-print("Reasons :")
-for r in reasons:
-    print("-", r)
-
-if trade:
-    print()
-    print("========== TRADE ==========")
-    print("Entry :", trade["entry"])
-    print("SL    :", trade["sl"])
-    print("TP    :", trade["tp"])
-    print("RR    :", trade["rr"])
+report.show_ai_decision(
+    buy_score,
+    sell_score,
+    trade_decision,
+    confidence,
+    reasons,
+)
+report.show_trade(trade)
