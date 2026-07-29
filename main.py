@@ -2,6 +2,8 @@ import market
 import report
 import analysis
 import decision
+import session_filter
+import killzone
 
 # initialize defaults to avoid NameError when not connected
 candles = []
@@ -30,6 +32,12 @@ print("========== TREND ==========")
 trend_result = trend_h1
 
 print("Trend :", trend_result)
+
+session = session_filter.get_session()
+kill_zone = killzone.get_killzone()
+
+print("Session :", session)
+print("Kill Zone :", kill_zone)
 
 (
     highs,
