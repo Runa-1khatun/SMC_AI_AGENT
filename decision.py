@@ -12,6 +12,8 @@ def make_decision(
     bos,
     choch,
     mss_signal,
+    displacement_signal,
+    entry_confirmation_signal,
     order_blocks,
     fvgs,
     sweeps,
@@ -19,13 +21,14 @@ def make_decision(
     ob_retest,
     fvg_retest,
 ):
-
     decision, confidence, reasons, buy_score, sell_score = confluence.analyze(
         trend_h4,
         trend_h1,
         bos,
         choch,
         mss_signal,
+        displacement_signal,
+        entry_confirmation_signal,
         order_blocks,
         fvgs,
         sweeps,
@@ -41,8 +44,6 @@ def make_decision(
         ob_retest,
         fvg_retest,
     )
-
-    confidence = max(buy_score, sell_score)
 
     trade = risk.calculate_trade(
         decision,

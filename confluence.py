@@ -1,3 +1,4 @@
+import decision
 import trend_score
 import structure_score
 import zone_score
@@ -9,6 +10,8 @@ def analyze(
     bos,
     choch,
     mss_signal,
+    displacement_signal,
+    entry_confirmation_signal,
     order_blocks,
     fvgs,
     sweeps,
@@ -142,13 +145,27 @@ def analyze(
     # Final Decision
     # =========================
 
-    if buy_score > sell_score and confidence >= 70:
+    if (
+        buy_score > sell_score
+        and confidence >= 70
+        and entry_confirmation_signal == "BUY"
+    ):
         decision = "BUY"
 
-    elif sell_score > buy_score and confidence >= 70:
+    elif (
+        sell_score > buy_score
+        and confidence >= 70
+        and entry_confirmation_signal == "SELL"
+    ):
         decision = "SELL"
 
     else:
         decision = "NO TRADE"
 
-    return decision, confidence, reasons, buy_score, sell_score
+    return (
+        decision,
+        confidence,
+        reasons,
+        buy_score,
+        sell_score,
+    )

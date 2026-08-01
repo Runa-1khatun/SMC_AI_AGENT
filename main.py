@@ -4,6 +4,7 @@ import analysis
 import decision
 import session_filter
 import killzone
+import entry_confirmation
 
 # initialize defaults to avoid NameError when not connected
 candles = []
@@ -62,9 +63,20 @@ print("Kill Zone :", kill_zone)
     trend_h1,
     entry_signal,
 )
+entry_confirmation_signal = entry_confirmation.confirm_entry(
+    trend_h4,
+    trend_h1,
+    bos,
+    choch,
+    mss_signal,
+    ob_retest,
+    fvg_retest,
+    killzone,
+)
 
 print("MSS :", mss_signal)
 print("Displacement :", displacement_signal)
+print("Entry Confirmation :", entry_confirmation_signal)
 print("Structure Bias :", bias)
 print("Premium/Discount :", pd_zone_result)
 result = decision.make_decision(
@@ -76,6 +88,8 @@ result = decision.make_decision(
     bos,
     choch,
     mss_signal,
+    displacement_signal,
+    entry_confirmation_signal,
     order_blocks,
     fvgs,
     sweeps,
@@ -83,7 +97,6 @@ result = decision.make_decision(
     ob_retest,
     fvg_retest,
 )
-
 trade_decision = result["decision"]
 confidence = result["confidence"]
 reasons = result["reasons"]
