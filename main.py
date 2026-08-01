@@ -44,6 +44,7 @@ print("Kill Zone :", kill_zone)
     lows,
     bos,
     choch,
+    mss_signal,
     bias,
     pd_zone_result,
     fvgs,
@@ -61,6 +62,7 @@ print("Kill Zone :", kill_zone)
     entry_signal,
 )
 
+print("MSS :", mss_signal)
 print("Structure Bias :", bias)
 print("Premium/Discount :", pd_zone_result)
 result = decision.make_decision(

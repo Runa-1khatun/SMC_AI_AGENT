@@ -117,7 +117,7 @@ def analyze(
     buy_score = max(0, buy_score)
     sell_score = max(0, sell_score)
 
-    confidence = max(buy_score, sell_score)
+    confidence = min(max(buy_score, sell_score), 100)
 
     # =========================
     # Final Decision

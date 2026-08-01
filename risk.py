@@ -7,7 +7,12 @@ def calculate_trade(decision, candles, highs, lows):
         if not lows:
             return None
 
-        last_low = lows[-1][1]
+        valid_lows = [low for _, low in lows if low < close]
+
+        if not valid_lows:
+            return None
+
+        last_low = max(valid_lows)
 
         entry = close
         sl = last_low - 0.50
@@ -19,7 +24,12 @@ def calculate_trade(decision, candles, highs, lows):
         if not highs:
             return None
 
-        last_high = highs[-1][1]
+        valid_highs = [high for _, high in highs if high > close]
+
+        if not valid_highs:
+            return None
+
+        last_high = min(valid_highs)
 
         entry = close
         sl = last_high + 0.50

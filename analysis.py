@@ -3,6 +3,7 @@ import orderblock
 import fvg as fvg_module
 import liquidity
 import pd_zone
+import mss
 
 def analyze_market(
     candles,
@@ -14,6 +15,11 @@ def analyze_market(
 
     bos = structure.detect_bos(candles, highs, lows)
     choch = structure.detect_choch(candles, highs, lows)
+    mss_signal = mss.detect_mss(
+    candles,
+    highs,
+    lows,
+)
     bias = structure.structure_bias(
         trend_h4,
         bos,
@@ -45,6 +51,7 @@ def analyze_market(
         lows,
         bos,
         choch,
+         mss_signal,
         bias,
         pd_zone_result,
         fvgs,
