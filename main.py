@@ -45,6 +45,7 @@ print("Kill Zone :", kill_zone)
     bos,
     choch,
     mss_signal,
+    displacement_signal,
     bias,
     pd_zone_result,
     fvgs,
@@ -63,6 +64,7 @@ print("Kill Zone :", kill_zone)
 )
 
 print("MSS :", mss_signal)
+print("Displacement :", displacement_signal)
 print("Structure Bias :", bias)
 print("Premium/Discount :", pd_zone_result)
 result = decision.make_decision(

@@ -4,6 +4,7 @@ import fvg as fvg_module
 import liquidity
 import pd_zone
 import mss
+import displacement
 
 def analyze_market(
     candles,
@@ -20,10 +21,15 @@ def analyze_market(
     highs,
     lows,
 )
+    displacement_signal = displacement.detect_displacement(
+    candles,
+    bos,
+)
     bias = structure.structure_bias(
         trend_h4,
         bos,
         choch,
+
     )
 
     pd_zone_result = pd_zone.premium_discount(candles)
@@ -51,7 +57,8 @@ def analyze_market(
         lows,
         bos,
         choch,
-         mss_signal,
+        mss_signal,
+        displacement_signal,
         bias,
         pd_zone_result,
         fvgs,
