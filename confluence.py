@@ -8,6 +8,7 @@ def analyze(
     trend_h1,
     bos,
     choch,
+    mss_signal,
     order_blocks,
     fvgs,
     sweeps,
@@ -38,6 +39,24 @@ def analyze(
     buy_score += buy_structure_score
     sell_score += sell_structure_score
     reasons.extend(structure_reasons)
+
+    # =========================
+    # MSS Score
+    # =========================
+
+    if mss_signal == "Bullish MSS":
+        buy_score += 15
+        reasons.append("Bullish MSS")
+
+        if trend_h4 == "BEARISH":
+            reasons.append("Counter Trend MSS")
+
+    elif mss_signal == "Bearish MSS":
+        sell_score += 15
+        reasons.append("Bearish MSS")
+
+        if trend_h4 == "BULLISH":
+            reasons.append("Counter Trend MSS")
 
     # =========================
     # Zone Scores

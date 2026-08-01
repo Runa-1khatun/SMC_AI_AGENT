@@ -3,6 +3,7 @@ def show_smc_report(
     lows,
     bos,
     choch,
+    mss_signal,
     fvgs,
     valid_fvg,
     fvg_retest,
@@ -17,6 +18,7 @@ def show_smc_report(
     print("Swing Lows :", len(lows))
     print("BOS :", bos)
     print("CHoCH :", choch)
+    print("MSS :", mss_signal)
     print("FVG :", len(fvgs))
 
     if valid_fvg:
