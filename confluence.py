@@ -11,6 +11,7 @@ def analyze(
     choch,
     mss_signal,
     displacement_signal,
+    liquidity_grab_signal,
     entry_confirmation_signal,
     order_blocks,
     fvgs,
@@ -69,6 +70,17 @@ def analyze(
     buy_score += buy_zone_score
     sell_score += sell_zone_score
     reasons.extend(zone_reasons)
+    # =========================
+    # Liquidity Grab Score
+    # =========================
+
+    if liquidity_grab_signal == "Bullish Liquidity Grab":
+        buy_score += 15
+        reasons.append("Bullish Liquidity Grab")
+
+    elif liquidity_grab_signal == "Bearish Liquidity Grab":
+         sell_score += 15
+         reasons.append("Bearish Liquidity Grab")
 
     # =========================
     # Entry

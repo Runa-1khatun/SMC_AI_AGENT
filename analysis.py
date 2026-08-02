@@ -5,6 +5,7 @@ import liquidity
 import pd_zone
 import mss
 import displacement
+import liquidity_grab
 
 def analyze_market(
     candles,
@@ -38,6 +39,10 @@ def analyze_market(
     order_blocks = orderblock.detect_order_blocks(candles)
     valid_order_block = orderblock.get_valid_order_block(order_blocks, trend_h4)
     sweeps = liquidity.detect_liquidity_sweep(candles, highs, lows)
+    liquidity_grab_signal = liquidity_grab.detect_liquidity_grab(
+    candles,
+    sweeps,
+)
     ob_retest = orderblock.order_block_retest(candles, order_blocks)
     valid_ob = orderblock.get_valid_order_block(
         order_blocks,
@@ -59,6 +64,7 @@ def analyze_market(
         choch,
         mss_signal,
         displacement_signal,
+        liquidity_grab_signal,
         bias,
         pd_zone_result,
         fvgs,

@@ -47,6 +47,7 @@ print("Kill Zone :", kill_zone)
     choch,
     mss_signal,
     displacement_signal,
+    liquidity_grab_signal,
     bias,
     pd_zone_result,
     fvgs,
@@ -76,6 +77,7 @@ entry_confirmation_signal = entry_confirmation.confirm_entry(
 
 print("MSS :", mss_signal)
 print("Displacement :", displacement_signal)
+print("Liquidity Grab :", liquidity_grab_signal)
 print("Entry Confirmation :", entry_confirmation_signal)
 print("Structure Bias :", bias)
 print("Premium/Discount :", pd_zone_result)
@@ -89,6 +91,7 @@ result = decision.make_decision(
     choch,
     mss_signal,
     displacement_signal,
+    liquidity_grab_signal,
     entry_confirmation_signal,
     order_blocks,
     fvgs,
