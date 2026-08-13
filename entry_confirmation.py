@@ -18,8 +18,7 @@ def confirm_entry(
             choch == "Bullish CHoCH"
             or mss_signal == "Bullish MSS"
         )
-        and ob_retest
-        and fvg_retest
+        and (ob_retest or fvg_retest)
         and killzone in ("LONDON", "NEW_YORK")
     ):
         return "BUY"
@@ -33,8 +32,7 @@ def confirm_entry(
             choch == "Bearish CHoCH"
             or mss_signal == "Bearish MSS"
         )
-        and ob_retest
-        and fvg_retest
+        and (ob_retest or fvg_retest)
         and killzone in ("LONDON", "NEW_YORK")
     ):
         return "SELL"

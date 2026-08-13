@@ -15,7 +15,7 @@ def disconnect():
     mt5.shutdown()
 
 
-def get_candles(symbol="XAUUSDm", timeframe=None, bars=100):
+def get_candles(symbol="XAUUSDm", timeframe=None, bars=500):
 
     if timeframe is None:
         timeframe = mt5.TIMEFRAME_M15

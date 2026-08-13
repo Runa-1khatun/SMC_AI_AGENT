@@ -6,6 +6,8 @@ import pd_zone
 import mss
 import displacement
 import liquidity_grab
+import equal_levels
+import ote
 
 def analyze_market(
     candles,
@@ -14,6 +16,10 @@ def analyze_market(
     entry_signal,
 ):
     highs, lows = structure.find_swings(candles, lookback=3)
+    equal_highs, equal_lows = equal_levels.detect_equal_levels(
+    highs,
+    lows,
+)
 
     bos = structure.detect_bos(candles, highs, lows)
     choch = structure.detect_choch(candles, highs, lows)
@@ -25,6 +31,10 @@ def analyze_market(
     displacement_signal = displacement.detect_displacement(
     candles,
     bos,
+)
+    ote_zone = ote.detect_ote(
+    candles,
+    trend_h1,
 )
     bias = structure.structure_bias(
         trend_h4,
@@ -60,6 +70,8 @@ def analyze_market(
     return (
         highs,
         lows,
+        equal_highs,
+        equal_lows,
         bos,
         choch,
         mss_signal,
@@ -74,5 +86,6 @@ def analyze_market(
         ob_retest,
         valid_ob,
         valid_fvg,
-        fvg_retest
+        fvg_retest,
+        ote_zone,
     )

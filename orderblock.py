@@ -72,22 +72,7 @@ def order_block_retest(candles, order_blocks):
         return True
 
     return False
-def premium_discount(candles):
 
-    highest = max(c["high"] for c in candles)
-    lowest = min(c["low"] for c in candles)
-
-    equilibrium = (highest + lowest) / 2
-
-    current = candles[-1]["close"]
-
-    if current > equilibrium:
-        return "PREMIUM"
-
-    elif current < equilibrium:
-        return "DISCOUNT"
-
-    return "EQUILIBRIUM"
 def get_valid_order_block(order_blocks, trend):
 
     if not order_blocks:

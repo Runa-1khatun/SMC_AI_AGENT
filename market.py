@@ -39,12 +39,18 @@ def load_market():
     print("H1 Trend :", trend_h1)
 
     entry_signal = entry.confirm_entry(candles_m5)
+    current_price = candles_m15[-1]["close"]
 
     print("Entry Signal :", entry_signal)
+    print("Current Price :", current_price)
 
     return {
         "candles": candles_m15,
+        "candles_h4": candles_h4,
+        "candles_h1": candles_h1,
+        "candles_m15": candles_m15,
         "trend_h4": trend_h4,
         "trend_h1": trend_h1,
         "entry_signal": entry_signal,
+        "current_price": current_price,
     }

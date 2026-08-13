@@ -10,8 +10,11 @@ def analyze(
     bos,
     choch,
     mss_signal,
+    ote_zone,
     displacement_signal,
     liquidity_grab_signal,
+    equal_highs,
+    equal_lows,
     entry_confirmation_signal,
     order_blocks,
     fvgs,
@@ -71,6 +74,19 @@ def analyze(
     sell_score += sell_zone_score
     reasons.extend(zone_reasons)
     # =========================
+    # OTE Score
+    # =========================
+
+    if ote_zone:
+
+       if ote_zone["type"] == "BUY":
+          buy_score += 15
+          reasons.append("BUY OTE Zone")
+
+       elif ote_zone["type"] == "SELL":
+          sell_score += 15
+          reasons.append("SELL OTE Zone")
+    # =========================
     # Liquidity Grab Score
     # =========================
 
@@ -81,6 +97,17 @@ def analyze(
     elif liquidity_grab_signal == "Bearish Liquidity Grab":
          sell_score += 15
          reasons.append("Bearish Liquidity Grab")
+    # =========================
+    # Equal High / Equal Low
+    # =========================
+
+    if liquidity_grab_signal == "Bullish Liquidity Grab" and len(equal_lows) > 0:
+       buy_score += 10
+       reasons.append("Equal Low Sweep")
+
+    elif liquidity_grab_signal == "Bearish Liquidity Grab" and len(equal_highs) > 0:
+        sell_score += 10
+        reasons.append("Equal High Sweep")
 
     # =========================
     # Entry

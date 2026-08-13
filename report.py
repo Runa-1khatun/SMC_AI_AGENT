@@ -1,6 +1,8 @@
 def show_smc_report(
     highs,
     lows,
+    equal_highs,
+    equal_lows,
     bos,
     choch,
     mss_signal,
@@ -16,6 +18,8 @@ def show_smc_report(
     print("========== SMC REPORT ==========")
     print("Swing Highs:", len(highs))
     print("Swing Lows :", len(lows))
+    print("Equal Highs :", len(equal_highs))
+    print("Equal Lows  :", len(equal_lows))
     print("BOS :", bos)
     print("CHoCH :", choch)
     print("MSS :", mss_signal)
