@@ -71,6 +71,13 @@ def check_trade_result(candles, start_index, trade):
 
 def run_backtest(candles, candles_h4, candles_h1):
 
+    # =========================
+    # Pre-calculate EMA
+    # =========================
+
+    df_h4_all = indicators.add_ema(candles_h4)
+    df_h1_all = indicators.add_ema(candles_h1)
+
     total_trades = 0
     wins = 0
     losses = 0
@@ -98,24 +105,29 @@ def run_backtest(candles, candles_h4, candles_h1):
         # Historical H4 Trend
         # =========================
 
-        df_h4 = indicators.add_ema(h4_history)
+        h4_rows = df_h4_all[df_h4_all["time"] <= current_time]
+
+        if len(h4_rows) < 200:
+            continue
 
         trend_h4 = trend.get_trend(
-            df_h4["EMA50"].iloc[-1],
-            df_h4["EMA200"].iloc[-1],
-        )
+            h4_rows["EMA50"].iloc[-1],
+            h4_rows["EMA200"].iloc[-1],
+)
 
         # =========================
         # Historical H1 Trend
         # =========================
 
-        df_h1 = indicators.add_ema(h1_history)
+        h1_rows = df_h1_all[df_h1_all["time"] <= current_time]
+
+        if len(h1_rows) < 200:
+            continue
 
         trend_h1 = trend.get_trend(
-            df_h1["EMA50"].iloc[-1],
-            df_h1["EMA200"].iloc[-1],
-        )
-
+            h1_rows["EMA50"].iloc[-1],
+            h1_rows["EMA200"].iloc[-1],
+)
         # =========================
         # SMC Analysis
         # =========================
@@ -257,10 +269,55 @@ def run_backtest(candles, candles_h4, candles_h1):
             "fvg_retest": fvg_retest,
             "killzone": killzone,
         })
+        # =========================
+    # Backtest Statistics
+    # =========================
+
+    closed_trades = wins + losses
+
+    if closed_trades > 0:
+        win_rate = (wins / closed_trades) * 100
+    else:
+        win_rate = 0
+
+    buy_trades = 0
+    sell_trades = 0
+
+    for trade in trade_log:
+
+        if trade["decision"] == "BUY":
+            buy_trades += 1
+
+        elif trade["decision"] == "SELL":
+            sell_trades += 1
+
+    # =========================
+    # Losing Streak
+    # =========================
+
+    current_loss_streak = 0
+    max_loss_streak = 0
+
+    for trade in trade_log:
+
+        if trade["result"] == "LOSS":
+
+            current_loss_streak += 1
+
+            if current_loss_streak > max_loss_streak:
+                max_loss_streak = current_loss_streak
+
+        else:
+            current_loss_streak = 0
+
     return {
-    "total_trades": total_trades,
-    "wins": wins,
-    "losses": losses,
-    "open_trades": open_trades,
-    "trade_log": trade_log,
-}
+        "total_trades": total_trades,
+        "wins": wins,
+        "losses": losses,
+        "open_trades": open_trades,
+        "win_rate": round(win_rate, 2),
+        "buy_trades": buy_trades,
+        "sell_trades": sell_trades,
+        "max_loss_streak": max_loss_streak,
+        "trade_log": trade_log,
+    }

@@ -1,11 +1,20 @@
-def detect_liquidity_sweep(candles, swing_highs, swing_lows):
+def detect_liquidity_sweep(candles, swing_highs, swing_lows, max_age=100):
 
     sweeps = []
 
+    total_candles = len(candles)
+
+    # =========================
     # Swing High Sweeps
+    # =========================
+
     for index, level in swing_highs:
 
-        for i in range(index + 1, len(candles)):
+        # অনেক পুরোনো swing ignore
+        start = index + 1
+        end = min(total_candles, index + max_age + 1)
+
+        for i in range(start, end):
 
             if (
                 candles[i]["high"] > level
@@ -18,10 +27,17 @@ def detect_liquidity_sweep(candles, swing_highs, swing_lows):
                 })
                 break
 
+    # =========================
     # Swing Low Sweeps
+    # =========================
+
     for index, level in swing_lows:
 
-        for i in range(index + 1, len(candles)):
+        # অনেক পুরোনো swing ignore
+        start = index + 1
+        end = min(total_candles, index + max_age + 1)
+
+        for i in range(start, end):
 
             if (
                 candles[i]["low"] < level

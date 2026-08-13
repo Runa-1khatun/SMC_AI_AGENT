@@ -158,6 +158,10 @@ print("Total Signals :", stats["total_trades"])
 print("Wins          :", stats["wins"])
 print("Losses        :", stats["losses"])
 print("Open Trades   :", stats["open_trades"])
+print("Win Rate      :", stats["win_rate"], "%")
+print("BUY Trades    :", stats["buy_trades"])
+print("SELL Trades   :", stats["sell_trades"])
+print("Max Loss Streak:", stats["max_loss_streak"])
 print("\n========== TRADE LOG ==========")
 
 for i, trade in enumerate(stats["trade_log"], 1):

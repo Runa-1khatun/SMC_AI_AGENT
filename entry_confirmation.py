@@ -9,31 +9,33 @@ def confirm_entry(
     killzone,
 ):
 
+    # =========================
     # BUY Confirmation
+    # =========================
+
     if (
         trend_h4 == "BULLISH"
         and trend_h1 == "BULLISH"
         and bos == "Bullish BOS"
-        and (
-            choch == "Bullish CHoCH"
-            or mss_signal == "Bullish MSS"
-        )
-        and (ob_retest or fvg_retest)
-        and killzone in ("LONDON", "NEW_YORK")
+        and choch == "Bullish CHoCH"
+        and mss_signal == "Bullish MSS"
+        and ob_retest
+        and killzone in ("LONDON", "NEWYORK", "OVERLAP")
     ):
         return "BUY"
 
+    # =========================
     # SELL Confirmation
+    # =========================
+
     if (
         trend_h4 == "BEARISH"
         and trend_h1 == "BEARISH"
         and bos == "Bearish BOS"
-        and (
-            choch == "Bearish CHoCH"
-            or mss_signal == "Bearish MSS"
-        )
-        and (ob_retest or fvg_retest)
-        and killzone in ("LONDON", "NEW_YORK")
+        and choch == "Bearish CHoCH"
+        and mss_signal == "Bearish MSS"
+        and ob_retest
+        and killzone in ("LONDON", "NEWYORK", "OVERLAP")
     ):
         return "SELL"
 
